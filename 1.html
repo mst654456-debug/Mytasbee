@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج التسبيح والأذكار وحصن المسلم</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --primary: #34d399;
+            --primary-hover: #10b981;
+            --secondary: #94a3b8;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--bg-color);
+            padding: 6px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Tasbeeh Tab Styles */
+        .tasbeeh-box {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dhikr-display {
+            font-size: 1.3rem;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: var(--bg-color);
+            border-radius: 12px;
+            width: 100%;
+            border: 1px solid var(--border);
+        }
+
+        .counter-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) var(--progress, 0deg), var(--border) 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            user-select: none;
+            transition: transform 0.1s;
+        }
+
+        .counter-circle:active {
+            transform: scale(0.96);
+        }
+
+        .counter-inner {
+            width: 176px;
+            height: 176px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .counter-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .counter-target {
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .action-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .add-dua-form {
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+            width: 100%;
+            text-align: right;
+        }
+
+        .add-dua-form h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        /* Hisn Al-Muslim Tab */
+        .hisn-categories {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .hisn-cat-btn {
+            white-space: nowrap;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        .hisn-cat-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .hisn-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .hisn-card h4 {
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .hisn-card p {
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .hisn-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+
+        /* Prayer Times Tab */
+        .prayer-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-color);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .prayer-card.active-prayer {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: var(--bg-color);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+
+    <div class="container">
+        <header>
+            <h1>برنامج التسبيح والأذكار</h1>
+            <div class="header-controls">
+                <button id="soundToggleBtn" onclick="toggleSoundMode()" class="btn-secondary" title="نمط الصوت">🔊 خرز</button>
+                <button onclick="toggleDarkMode()" class="btn-secondary" title="الوضع الليلي">🌓</button>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tasbeeh')">المسبحة والأدعية</button>
+            <button class="tab-btn" onclick="switchTab('hisn')">حصن المسلم</button>
+            <button class="tab-btn" onclick="switchTab('prayer')">مواقيت الصلاة</button>
+        </div>
+
+        <!-- Tab 1: Tasbeeh & Duas -->
+        <div id="tasbeeh" class="tab-content active">
+            <div class="stats-bar">
+                <span>إجمالي التسبيحات: <span id="totalCountDisplay">0</span></span>
+                <span>الهدف الحالي: <span id="targetDisplay">100</span></span>
+            </div>
+
+            <div class="tasbeeh-box">
+                <div class="dhikr-display" id="currentDhikrText">
+                    سبحان الله وبحمده، سبحان الله العظيم
+                </div>
+
+                <div class="counter-circle" id="counterCircle" onclick="incrementTasbeeh()">
+                    <div class="counter-inner">
+                        <div class="counter-number" id="counterNum">0</div>
+                        <div class="counter-target">اضغط للعد</div>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button onclick="resetCounter()" class="btn-secondary">تصفير العداد</button>
+                    <button onclick="speakCurrentDhikr()">🔊 استماع للذكر</button>
+                </div>
+
+                <div class="add-dua-form">
+                    <h3>أضف دعاءً أو ذكراً جديداً</h3>
+                    <input type="text" id="newDhikrText" placeholder="اكتب الذكر أو الدعاء هنا...">
+                    <input type="number" id="newDhikrTarget" placeholder="العدد المستهدف (مثلاً 33 أو 100)" value="100">
+                    <button onclick="addNewDhikr()">إضافة للقائمة</button>
+                </div>
+
+                <div style="width: 100%; margin-top: 15px; text-align: right;">
+                    <h3>قائمة الأذكار والأدعية</h3>
+                    <select id="dhikrSelector" onchange="selectDhikrFromDropdown()" style="margin-top: 5px;">
+                        <option value="سبحان الله وبحمده، سبحان الله العظيم|100">سبحان الله وبحمده، سبحان الله العظيم (100)</option>
+                        <option value="لا إله إلا الله وحده لا شريك له|100">لا إله إلا الله وحده لا شريك له (100)</option>
+                        <option value="سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَلَا إِلَهَ إِلَّا اللَّهُ، وَاللَّهُ أَكْبَرُ|100">الباقيات الصالحات (100)</option>
+                        <option value="استغفر الله العظيم واتوب إليه|100">استغفر الله العظيم (100)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Hisn Al-Muslim -->
+        <div id="hisn" class="tab-content">
+            <div class="hisn-categories" id="hisnCategories">
+                <button class="hisn-cat-btn active" onclick="filterHisn('الصباح')">أذكار الصباح</button>
+                <button class="hisn-cat-btn" onclick="filterHisn('المساء')">أذكار المساء</button>
+                <button class="hisn-cat-btn" onclick="filterHisn('الصلاة')">بعد الصلاة</button>
+                <button class="hisn-cat-btn" onclick="filterHisn('النوم')">النوم والاستيقاظ</button>
+                <button class="hisn-cat-btn" onclick="filterHisn('أدعية')">أدعية الكرب</button>
+            </div>
+            <div id="hisnListContainer">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <!-- Tab 3: Prayer Times -->
+        <div id="prayer" class="tab-content">
+            <div style="text-align: center; margin-bottom: 15px;">
+                <h3>مواقيت الصلاة (القاهرة، مصر)</h3>
+                <p id="nextPrayerTimer" style="color: var(--primary); font-weight: bold; margin-top: 5px;"></p>
+            </div>
+            <div id="prayerListContainer">
+                <!-- Populated via JS -->
+            </div>
+            <button onclick="testAzanSound()" style="width: 100%; margin-top: 15px;" class="btn-secondary">تجربة تنبيه الصلاة</button>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentCount = 0;
+        let totalCount = parseInt(localStorage.getItem('totalTasbeeh') || '0');
+        let currentTarget = 100;
+        let soundMode = 'beads'; // 'beads', 'soft', 'mute'
+        let isDark = true;
+
+        document.getElementById('totalCountDisplay').textContent = totalCount;
+
+        // Web Audio API Sound Synthesizer
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (soundMode === 'mute') return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'beads') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'complete') {
+                // Success chime
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'azan') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(554.37, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.8);
+            }
+        }
+
+        function toggleSoundMode() {
+            const modes = ['beads', 'soft', 'mute'];
+            const names = ['🔊 خرز', '🔔 ناعم', '🔇 صامت'];
+            let idx = modes.indexOf(soundMode);
+            idx = (idx + 1) % modes.length;
+            soundMode = modes[idx];
+            document.getElementById('soundToggleBtn').textContent = names[idx];
+        }
+
+        function toggleDarkMode() {
+            isDark = !isDark;
+            document.body.classList.toggle('dark-mode', isDark);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Tasbeeh Logic
+        function incrementTasbeeh() {
+            currentCount++;
+            totalCount++;
+            localStorage.setItem('totalTasbeeh', totalCount);
+            document.getElementById('counterNum').textContent = currentCount;
+            document.getElementById('totalCountDisplay').textContent = totalCount;
+
+            let progress = (currentCount / currentTarget) * 360;
+            if (progress > 360) progress = 360;
+            document.getElementById('counterCircle').style.setProperty('--progress', `${progress}deg`);
+
+            playSound(soundMode === 'soft' ? 'soft' : 'beads');
+
+            if (currentCount === currentTarget) {
+                playSound('complete');
+            }
+        }
+
+        function resetCounter() {
+            currentCount = 0;
+            document.getElementById('counterNum').textContent = currentCount;
+            document.getElementById('counterCircle').style.setProperty('--progress', '0deg');
+        }
+
+        function selectDhikrFromDropdown() {
+            const val = document.getElementById('dhikrSelector').value;
+            const parts = val.split('|');
+            document.getElementById('currentDhikrText').textContent = parts[0];
+            currentTarget = parseInt(parts[1]);
+            document.getElementById('targetDisplay').textContent = currentTarget;
+            resetCounter();
+        }
+
+        function addNewDhikr() {
+            const text = document.getElementById('newDhikrText').value.trim();
+            const target = parseInt(document.getElementById('newDhikrTarget').value) || 100;
+            if (!text) return;
+
+            const select = document.getElementById('dhikrSelector');
+            const opt = document.createElement('option');
+            opt.value = `${text}|${target}`;
+            opt.textContent = `${text} (${target})`;
+            select.appendChild(opt);
+            select.value = opt.value;
+            selectDhikrFromDropdown();
+
+            document.getElementById('newDhikrText').value = '';
+        }
+
+        function speakCurrentDhikr() {
+            const text = document.getElementById('currentDhikrText').textContent;
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Hisn Al-Muslim Data & Logic
+        const hisnData = [
+            { cat: 'الصباح', title: 'آية الكرسي', text: 'اللّهُ لاَ إِلَـهَ إِلاَّ هو الْحَيُّ الْقَيُّومُ...', count: 1, benefit: 'حفظ من الشيطان حتى تمسي' },
+            { cat: 'الصباح', title: 'سيد الاستغفار', text: 'اللَّهُمَّ أَنْتَ رَبِّي لا إِلَهَ إِلا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ...', count: 1, benefit: 'من قاها موقناً بها فمات دخل الجنة' },
+            { cat: 'المساء', title: 'أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ', text: 'أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ، وَالحَمْدُ لِلَّهِ، لا إِلهَ إلاّ اللَّه...', count: 1, benefit: 'طمأنينة وبركة في الليلة' },
+            { cat: 'الصلاة', title: 'أذكار بعد السلام من الصلاة', text: 'أستغفر الله (ثلاثاً)، اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام.', count: 1, benefit: 'مغفرة الذنوب ورفع الدرجات' },
+            { cat: 'النوم', title: 'باسمك ربي وضعت جنبي', text: 'بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، إِنْ أَمْسَكْتَ نَفْسي فَارْحَمْهَا...', count: 1, benefit: 'حفظ النفس أثناء النوم' },
+            { cat: 'أدعية', title: 'دعاء الكرب والهم', text: 'لا إله إلا الله العظيم الحليم، لا إله إلا الله رب العرش العظيم...', count: 1, benefit: 'فرج الهم والكرب العظيم' }
+        ];
+
+        function filterHisn(category) {
+            document.querySelectorAll('.hisn-cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const container = document.getElementById('hisnListContainer');
+            container.innerHTML = '';
+
+            const filtered = hisnData.filter(item => item.cat === category);
+            filtered.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="hisn-card">
+                        <h4>${item.title}</h4>
+                        <p>${item.text}</p>
+                        <div class="hisn-footer">
+                            <span>الفضل: ${item.benefit}</span>
+                            <button onclick="incrementHisn(${index})" class="btn-secondary" id="hisn-btn-${index}">عدّ (0/${item.count})</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        let hisnCounts = {};
+        function incrementHisn(index) {
+            hisnCounts[index] = (hisnCounts[index] || 0) + 1;
+            const item = hisnData[index];
+            const btn = document.getElementById(`hisn-btn-${index}`);
+            if (hisnCounts[index] >= item.count) {
+                btn.textContent = 'تم الذكر ✓';
+                btn.style.background = 'var(--primary)';
+                playSound('complete');
+            } else {
+                btn.textContent = `عدّ (${hisnCounts[index]}/${item.count})`;
+                playSound('beads');
+            }
+        }
+
+        // Prayer Times Logic
+        const prayers = [
+            { name: 'الفجر', time: '04:51 ص' },
+            { name: 'الشروق', time: '06:21 ص' },
+            { name: 'الظهر', time: '11:40 ص' },
+            { name: 'العصر', time: '02:38 م' },
+            { name: 'المغرب', time: '04:59 م' },
+            { name: 'العشاء', time: '06:20 م' }
+        ];
+
+        function loadPrayerTimes() {
+            const container = document.getElementById('prayerListContainer');
+            container.innerHTML = '';
+            prayers.forEach((p, idx) => {
+                container.innerHTML += `
+                    <div class="prayer-card ${idx === 2 ? 'active-prayer' : ''}">
+                        <span><strong>${p.name}</strong></span>
+                        <span>${p.time}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('nextPrayerTimer').textContent = 'الصلاة القادمة: الظهر بعد 2 ساعة و 15 دقيقة';
+        }
+
+        function testAzanSound() {
+            playSound('azan');
+        }
+
+        // Initialize
+        filterHisn('الصباح');
+        loadPrayerTimes();
+
+        // Keyboard Support for Tasbeeh (Spacebar)
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && document.getElementById('tasbeeh').classList.contains('active')) {
+                e.preventDefault();
+                incrementTasbeeh();
+            }
+        });
+    </script>
+</body>
+</html>
